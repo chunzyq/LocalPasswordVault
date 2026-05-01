@@ -12,6 +12,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using LocalPasswordVault.Models;
 
 namespace LocalPasswordVault
 {
@@ -20,21 +21,60 @@ namespace LocalPasswordVault
     /// </summary>
     public partial class MainWindow : Window
     {
+
+        private VaultData _vault = new VaultData();
+
         public MainWindow()
         {
             InitializeComponent();
 
-            // Временные тестовые записи, чтобы увидеть дизайн списка.
-            EntriesList.ItemsSource = new List<TestPasswordEntry>
+            CreateTestData();
+
+            EntriesList.ItemsSource = _vault.Entries;
+        }
+
+        private void CreateTestData()
         {
-            new TestPasswordEntry { Title = "GitHub" },
-            new TestPasswordEntry { Title = "Google" },
-            new TestPasswordEntry { Title = "Steam" },
-            new TestPasswordEntry { Title = "Discord" },
-            new TestPasswordEntry { Title = "Facebook" },
-            new TestPasswordEntry { Title = "Twitter" },
-            new TestPasswordEntry { Title = "LinkedIn" }
-        };
+            PasswordEntry github = new PasswordEntry
+            {
+                Title = "GitHub",
+                Username = "me@example.com",
+                Url = "https://github.com"
+            };
+
+            github.Versions.Add(new PasswordVersion
+            {
+                VersionNumber = 1,
+                Password = "old123",
+                CreatedAt = DateTime.Now.AddDays(-10),
+                Comment = "Первый пароль"
+            });
+
+            github.Versions.Add(new PasswordVersion
+            {
+                VersionNumber = 2,
+                Password = "new456",
+                CreatedAt = DateTime.Now,
+                Comment = "Новый пароль"
+            });
+
+            PasswordEntry google = new PasswordEntry
+            {
+                Title = "Google",
+                Username = "me@gmail.com",
+                Url = "https://google.com"
+            };
+
+            google.Versions.Add(new PasswordVersion
+            {
+                VersionNumber = 1,
+                Password = "google-test-password",
+                CreatedAt = DateTime.Now,
+                Comment = "Тестовая версия"
+            });
+
+            _vault.Entries.Add(github);
+            _vault.Entries.Add(google);
         }
 
         private void AddEntryButton_Click(object sender, RoutedEventArgs e)
